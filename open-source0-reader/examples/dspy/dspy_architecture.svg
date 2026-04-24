@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" role="img" aria-labelledby="title desc">
+  <title id="title">DSPy Simplified Architecture</title>
+  <desc id="desc">Simplified DSPy architecture showing user program, core abstractions, prompt translation, model client, providers, and optimization loop.</desc>
+  <defs>
+    <style>
+      .bg{fill:#fcfbf7}.box{fill:#fff;stroke:#1f2937;stroke-width:2.4}.soft{fill:#eef2ff;stroke:#1f2937;stroke-width:2.4}.green{fill:#ecfdf3;stroke:#1f2937;stroke-width:2.4}.orange{fill:#fff7ed;stroke:#1f2937;stroke-width:2.4}.purple{fill:#f5f3ff;stroke:#1f2937;stroke-width:2.4}.title{font:700 30px ui-sans-serif,system-ui;fill:#111827}.sub{font:500 15px ui-sans-serif,system-ui;fill:#667085}.h{font:700 20px ui-sans-serif,system-ui;fill:#111827}.p{font:500 14px ui-sans-serif,system-ui;fill:#374151}.small{font:500 13px ui-sans-serif,system-ui;fill:#6b7280}.arrow{stroke:#111827;stroke-width:3;fill:none;marker-end:url(#arrow)}.dash{stroke:#7c3aed;stroke-width:3;fill:none;stroke-dasharray:9 8;marker-end:url(#arrow-purple)}
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#111827"/></marker>
+    <marker id="arrow-purple" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#7c3aed"/></marker>
+  </defs>
+  <rect class="bg" width="1280" height="760" rx="22"/>
+  <text class="title" x="56" y="62">DSPy 简洁架构图</text>
+  <text class="sub" x="56" y="90">主线：结构化 LLM 程序如何被翻译、执行、评估和优化</text>
+
+  <rect class="box" x="80" y="155" width="230" height="110" rx="18"/>
+  <text class="h" x="195" y="198" text-anchor="middle">User Program</text>
+  <text class="p" x="195" y="228" text-anchor="middle">用户写的 DSPy 代码</text>
+
+  <rect class="soft" x="400" y="125" width="270" height="170" rx="20"/>
+  <text class="h" x="535" y="166" text-anchor="middle">Core Abstractions</text>
+  <text class="p" x="535" y="199" text-anchor="middle">Signature：输入 / 输出契约</text>
+  <text class="p" x="535" y="228" text-anchor="middle">Predict / Module：执行与组合</text>
+  <text class="p" x="535" y="257" text-anchor="middle">Example / Prediction：数据容器</text>
+
+  <rect class="orange" x="760" y="155" width="230" height="110" rx="18"/>
+  <text class="h" x="875" y="198" text-anchor="middle">Adapter</text>
+  <text class="p" x="875" y="228" text-anchor="middle">字段 ⇄ messages</text>
+
+  <rect class="green" x="1080" y="155" width="150" height="110" rx="18"/>
+  <text class="h" x="1155" y="198" text-anchor="middle">LM</text>
+  <text class="p" x="1155" y="228" text-anchor="middle">LiteLLM / Provider</text>
+
+  <path class="arrow" d="M310 210 L400 210"/>
+  <path class="arrow" d="M670 210 L760 210"/>
+  <path class="arrow" d="M990 210 L1080 210"/>
+
+  <rect class="purple" x="260" y="430" width="280" height="130" rx="20"/>
+  <text class="h" x="400" y="474" text-anchor="middle">Teleprompter</text>
+  <text class="p" x="400" y="505" text-anchor="middle">自动优化 prompt/program</text>
+  <text class="small" x="400" y="532" text-anchor="middle">demos / instructions / rules / weights</text>
+
+  <rect class="box" x="650" y="430" width="240" height="130" rx="20"/>
+  <text class="h" x="770" y="474" text-anchor="middle">Evaluate</text>
+  <text class="p" x="770" y="505" text-anchor="middle">用 metric 打分</text>
+  <text class="small" x="770" y="532" text-anchor="middle">trainset / valset</text>
+
+  <path class="dash" d="M535 295 C525 365 465 385 400 430"/>
+  <path class="dash" d="M540 495 L650 495"/>
+  <path class="dash" d="M770 430 C760 350 670 315 590 295"/>
+
+  <text class="small" x="80" y="680">读图口诀：用户写结构化程序 → Core 保存语义 → Adapter 生成 prompt/messages → LM 调模型 → Teleprompter + Evaluate 形成优化闭环。</text>
+</svg>

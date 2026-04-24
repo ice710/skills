@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="860" viewBox="0 0 1180 860" role="img" aria-labelledby="title desc">
+  <title id="title">DSPy Simplified Predict Flow</title>
+  <desc id="desc">Simplified vertical flow of a DSPy Predict call.</desc>
+  <defs>
+    <style>
+      .bg{fill:#fcfbf7}.box{fill:#fff;stroke:#1f2937;stroke-width:2.4}.blue{fill:#eef2ff;stroke:#1f2937;stroke-width:2.4}.green{fill:#ecfdf3;stroke:#1f2937;stroke-width:2.4}.orange{fill:#fff7ed;stroke:#1f2937;stroke-width:2.4}.title{font:700 30px ui-sans-serif,system-ui;fill:#111827}.sub{font:500 15px ui-sans-serif,system-ui;fill:#667085}.h{font:700 19px ui-sans-serif,system-ui;fill:#111827}.p{font:500 14px ui-sans-serif,system-ui;fill:#374151}.small{font:500 13px ui-sans-serif,system-ui;fill:#6b7280}.arrow{stroke:#111827;stroke-width:3;fill:none;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#111827"/></marker>
+  </defs>
+  <rect class="bg" width="1180" height="860" rx="22"/>
+  <text class="title" x="56" y="62">DSPy Predict 简洁流程图</text>
+  <text class="sub" x="56" y="90">一次 qa(question=...) 如何变成 result.answer</text>
+
+  <g transform="translate(350,125)">
+    <rect class="box" x="0" y="0" width="480" height="78" rx="17"/>
+    <text class="h" x="240" y="32" text-anchor="middle">1. 定义任务</text>
+    <text class="p" x="240" y="58" text-anchor="middle">dspy.Predict("question -> answer")</text>
+
+    <path class="arrow" d="M240 78 L240 118"/>
+    <rect class="blue" x="0" y="118" width="480" height="88" rx="17"/>
+    <text class="h" x="240" y="152" text-anchor="middle">2. Signature 解析</text>
+    <text class="p" x="240" y="179" text-anchor="middle">左边是输入字段，右边是输出字段</text>
+
+    <path class="arrow" d="M240 206 L240 246"/>
+    <rect class="box" x="0" y="246" width="480" height="88" rx="17"/>
+    <text class="h" x="240" y="280" text-anchor="middle">3. 调用模块</text>
+    <text class="p" x="240" y="307" text-anchor="middle">Module.__call__ 处理 context / callback / usage</text>
+
+    <path class="arrow" d="M240 334 L240 374"/>
+    <rect class="orange" x="0" y="374" width="480" height="88" rx="17"/>
+    <text class="h" x="240" y="408" text-anchor="middle">4. Predict 预处理</text>
+    <text class="p" x="240" y="435" text-anchor="middle">校验输入、读取 LM、合并 config、取 demos</text>
+
+    <path class="arrow" d="M240 462 L240 502"/>
+    <rect class="blue" x="0" y="502" width="480" height="88" rx="17"/>
+    <text class="h" x="240" y="536" text-anchor="middle">5. Adapter 生成 messages</text>
+    <text class="p" x="240" y="563" text-anchor="middle">Signature + demos + inputs → system/user messages</text>
+
+    <path class="arrow" d="M240 590 L240 630"/>
+    <rect class="green" x="0" y="630" width="480" height="88" rx="17"/>
+    <text class="h" x="240" y="664" text-anchor="middle">6. LM 调用并解析输出</text>
+    <text class="p" x="240" y="691" text-anchor="middle">LiteLLM / Provider → Adapter.parse → Prediction</text>
+  </g>
+
+  <g transform="translate(70,250)">
+    <rect class="box" x="0" y="0" width="210" height="150" rx="18"/>
+    <text class="h" x="105" y="40" text-anchor="middle">常见失败点</text>
+    <text class="small" x="24" y="76">• 未 configure LM</text>
+    <text class="small" x="24" y="104">• 输入字段名不匹配</text>
+    <text class="small" x="24" y="132">• 输出格式解析失败</text>
+  </g>
+
+  <g transform="translate(900,250)">
+    <rect class="box" x="0" y="0" width="210" height="150" rx="18"/>
+    <text class="h" x="105" y="40" text-anchor="middle">核心产物</text>
+    <text class="small" x="24" y="76">• messages</text>
+    <text class="small" x="24" y="104">• model response</text>
+    <text class="small" x="24" y="132">• result.answer</text>
+  </g>
+</svg>

@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="980" viewBox="0 0 1500 980" role="img" aria-labelledby="title desc">
+  <title id="title">DSPy Prompt Optimization Animated Flow</title>
+  <desc id="desc">Animated SVG showing DSPy's optimization loop from student program, trainset and metric to candidate generation, evaluation, selection and compiled program.</desc>
+  <defs>
+    <style>
+      .bg { fill: #fcfbf7; }
+      .card { fill: #fffdf8; stroke: #2f2a1f; stroke-width: 2.5; }
+      .blue { fill: #e8f1ff; stroke: #2f2a1f; stroke-width: 2.5; }
+      .green { fill: #eaf7ee; stroke: #2f2a1f; stroke-width: 2.5; }
+      .orange { fill: #fff1e5; stroke: #2f2a1f; stroke-width: 2.5; }
+      .purple { fill: #f3edff; stroke: #2f2a1f; stroke-width: 2.5; }
+      .title { font: 700 32px 'Inter', 'Segoe UI', sans-serif; fill: #201a12; }
+      .subtitle { font: 500 16px 'Inter', 'Segoe UI', sans-serif; fill: #5a5144; }
+      .h { font: 700 21px 'Inter', 'Segoe UI', sans-serif; fill: #201a12; }
+      .p { font: 500 15px 'Inter', 'Segoe UI', sans-serif; fill: #3d352b; }
+      .small { font: 500 13px 'Inter', 'Segoe UI', sans-serif; fill: #4d4337; }
+      .arrow { stroke: #2f2a1f; stroke-width: 3.5; fill: none; marker-end: url(#arrow); }
+      .loop { stroke: #7c3aed; stroke-width: 3.5; fill: none; marker-end: url(#arrow-purple); stroke-dasharray: 12 10; }
+      .pulse { opacity: .12; }
+      .token { fill: #111827; opacity: .92; }
+      .token-blue { fill: #2563eb; opacity: .95; }
+      .token-green { fill: #16a34a; opacity: .95; }
+      .token-orange { fill: #f97316; opacity: .95; }
+      .token-purple { fill: #7c3aed; opacity: .95; }
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#2f2a1f" />
+    </marker>
+    <marker id="arrow-purple" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#7c3aed" />
+    </marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#111827" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <rect class="bg" width="1500" height="980" rx="24"/>
+  <text class="title" x="60" y="66">DSPy Prompt 自动优化流程动态图</text>
+  <text class="subtitle" x="60" y="96">核心思想：生成候选 prompt/program → 用 metric 评估 → 选择最佳 → 写回 compiled program</text>
+
+  <g filter="url(#shadow)">
+    <rect id="student" class="blue" x="70" y="170" width="300" height="125" rx="20"/>
+    <text class="h" x="220" y="214" text-anchor="middle">Student Program</text>
+    <text class="p" x="220" y="244" text-anchor="middle">初始 DSPy 程序</text>
+    <text class="small" x="220" y="270" text-anchor="middle">Predict / Module / Signature</text>
+
+    <rect id="data" class="green" x="70" y="350" width="300" height="125" rx="20"/>
+    <text class="h" x="220" y="394" text-anchor="middle">Trainset / Valset</text>
+    <text class="p" x="220" y="424" text-anchor="middle">Example 数据样本</text>
+    <text class="small" x="220" y="450" text-anchor="middle">inputs + labels</text>
+
+    <rect id="metric" class="orange" x="70" y="530" width="300" height="125" rx="20"/>
+    <text class="h" x="220" y="574" text-anchor="middle">Metric</text>
+    <text class="p" x="220" y="604" text-anchor="middle">效果评价函数</text>
+    <text class="small" x="220" y="630" text-anchor="middle">规则 / F1 / LLM judge</text>
+
+    <rect id="optimizer" class="purple" x="520" y="335" width="330" height="155" rx="22"/>
+    <text class="h" x="685" y="380" text-anchor="middle">Teleprompter.compile</text>
+    <text class="p" x="685" y="412" text-anchor="middle">优化器入口</text>
+    <text class="small" x="685" y="440" text-anchor="middle">BootstrapFewShot / MIPROv2 / GEPA / SIMBA</text>
+    <text class="small" x="685" y="464" text-anchor="middle">输入：student + trainset + metric</text>
+
+    <rect id="candidate" class="card" x="1000" y="155" width="350" height="155" rx="22"/>
+    <text class="h" x="1175" y="200" text-anchor="middle">生成候选</text>
+    <text class="p" x="1175" y="232" text-anchor="middle">candidate prompt/programs</text>
+    <text class="small" x="1175" y="260" text-anchor="middle">instructions / demos / rules / prefix</text>
+    <text class="small" x="1175" y="284" text-anchor="middle">有些优化器还生成 finetune data</text>
+
+    <rect id="evaluate" class="card" x="1000" y="380" width="350" height="155" rx="22"/>
+    <text class="h" x="1175" y="425" text-anchor="middle">批量评估</text>
+    <text class="p" x="1175" y="457" text-anchor="middle">Evaluate(candidate, valset)</text>
+    <text class="small" x="1175" y="485" text-anchor="middle">对每个候选运行程序</text>
+    <text class="small" x="1175" y="509" text-anchor="middle">用 metric 得到 score</text>
+
+    <rect id="select" class="card" x="1000" y="605" width="350" height="155" rx="22"/>
+    <text class="h" x="1175" y="650" text-anchor="middle">选择最佳</text>
+    <text class="p" x="1175" y="682" text-anchor="middle">best candidate</text>
+    <text class="small" x="1175" y="710" text-anchor="middle">保留最高分 instructions + demos</text>
+    <text class="small" x="1175" y="734" text-anchor="middle">写回 predictor / signature / lm</text>
+
+    <rect id="compiled" class="green" x="560" y="760" width="330" height="135" rx="22"/>
+    <text class="h" x="725" y="806" text-anchor="middle">Compiled Program</text>
+    <text class="p" x="725" y="838" text-anchor="middle">优化后的 DSPy 程序</text>
+    <text class="small" x="725" y="866" text-anchor="middle">_compiled = True，可直接用于推理</text>
+  </g>
+
+  <path class="arrow" d="M370 232 C430 245 458 330 520 382"/>
+  <path class="arrow" d="M370 412 C430 412 462 412 520 412"/>
+  <path class="arrow" d="M370 592 C432 575 462 500 520 448"/>
+
+  <path class="arrow" d="M850 392 C920 330 940 250 1000 232"/>
+  <path class="arrow" d="M1175 310 L1175 380"/>
+  <path class="arrow" d="M1175 535 L1175 605"/>
+  <path class="arrow" d="M1000 690 C920 735 900 790 890 820"/>
+
+  <path class="loop" d="M1350 682 C1430 610 1430 305 1350 232"/>
+  <text class="small" x="1410" y="462" text-anchor="middle" transform="rotate(90 1410 462)">多轮搜索 / 进化 / 随机搜索</text>
+
+  <g>
+    <circle class="token-blue" r="8">
+      <animateMotion dur="4.8s" repeatCount="indefinite" path="M370 232 C430 245 458 330 520 382"/>
+    </circle>
+    <circle class="token-green" r="8">
+      <animateMotion dur="4.8s" begin=".35s" repeatCount="indefinite" path="M370 412 C430 412 462 412 520 412"/>
+    </circle>
+    <circle class="token-orange" r="8">
+      <animateMotion dur="4.8s" begin=".7s" repeatCount="indefinite" path="M370 592 C432 575 462 500 520 448"/>
+    </circle>
+    <circle class="token-purple" r="9">
+      <animateMotion dur="4.8s" begin="1.05s" repeatCount="indefinite" path="M850 392 C920 330 940 250 1000 232"/>
+    </circle>
+    <circle class="token" r="8">
+      <animateMotion dur="4.8s" begin="1.55s" repeatCount="indefinite" path="M1175 310 L1175 380"/>
+    </circle>
+    <circle class="token" r="8">
+      <animateMotion dur="4.8s" begin="2.05s" repeatCount="indefinite" path="M1175 535 L1175 605"/>
+    </circle>
+    <circle class="token-green" r="9">
+      <animateMotion dur="4.8s" begin="2.55s" repeatCount="indefinite" path="M1000 690 C920 735 900 790 890 820"/>
+    </circle>
+    <circle class="token-purple" r="7">
+      <animateMotion dur="4.8s" begin="2.85s" repeatCount="indefinite" path="M1350 682 C1430 610 1430 305 1350 232"/>
+    </circle>
+  </g>
+
+  <g>
+    <rect class="pulse" x="1000" y="155" width="350" height="155" rx="22" fill="#7c3aed">
+      <animate attributeName="opacity" values="0.05;0.18;0.05" dur="2.4s" repeatCount="indefinite"/>
+    </rect>
+    <rect class="pulse" x="1000" y="380" width="350" height="155" rx="22" fill="#2563eb">
+      <animate attributeName="opacity" values="0.04;0.16;0.04" dur="2.4s" begin=".7s" repeatCount="indefinite"/>
+    </rect>
+    <rect class="pulse" x="1000" y="605" width="350" height="155" rx="22" fill="#16a34a">
+      <animate attributeName="opacity" values="0.04;0.16;0.04" dur="2.4s" begin="1.4s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <g transform="translate(70,720)">
+    <rect class="card" x="0" y="0" width="390" height="175" rx="20"/>
+    <text class="h" x="195" y="38" text-anchor="middle">优化器分别会改什么？</text>
+    <text class="small" x="28" y="72">BootstrapFewShot：选择 / 生成 demos</text>
+    <text class="small" x="28" y="100">MIPROv2：搜索 instructions + demos 组合</text>
+    <text class="small" x="28" y="128">GEPA：基于 trace 反思并进化 instructions</text>
+    <text class="small" x="28" y="156">SIMBA：追加成功 demo 或反思规则</text>
+  </g>
+
+  <text class="small" x="60" y="948">注意：默认优化内容组件，不优化 prompt 布局顺序；布局由 Adapter 决定。</text>
+</svg>

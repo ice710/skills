@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="760" viewBox="0 0 1320 760" role="img" aria-labelledby="title desc">
+  <title id="title">DSPy Simplified Sequence</title>
+  <desc id="desc">Simplified sequence diagram for one DSPy Predict call.</desc>
+  <defs>
+    <style>
+      .bg{fill:#fcfbf7}.head{fill:#fff;stroke:#1f2937;stroke-width:2.2}.head2{fill:#eef2ff;stroke:#1f2937;stroke-width:2.2}.head3{fill:#ecfdf3;stroke:#1f2937;stroke-width:2.2}.line{stroke:#9ca3af;stroke-width:1.8;stroke-dasharray:7 7}.msg{stroke:#111827;stroke-width:2.8;fill:none;marker-end:url(#arrow)}.ret{stroke:#6b7280;stroke-width:2.3;fill:none;stroke-dasharray:8 7;marker-end:url(#arrow-gray)}.title{font:700 30px ui-sans-serif,system-ui;fill:#111827}.sub{font:500 15px ui-sans-serif,system-ui;fill:#667085}.h{font:700 17px ui-sans-serif,system-ui;fill:#111827}.p{font:500 13px ui-sans-serif,system-ui;fill:#374151}.small{font:500 13px ui-sans-serif,system-ui;fill:#6b7280}
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#111827"/></marker>
+    <marker id="arrow-gray" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#6b7280"/></marker>
+  </defs>
+  <rect class="bg" width="1320" height="760" rx="22"/>
+  <text class="title" x="56" y="62">DSPy Predict 简洁时序图</text>
+  <text class="sub" x="56" y="90">保留最关键的对象交互，去掉实现细节噪声</text>
+
+  <g transform="translate(70,145)">
+    <rect class="head" x="0" y="0" width="140" height="52" rx="14"/><text class="h" x="70" y="32" text-anchor="middle">User</text><line class="line" x1="70" y1="52" x2="70" y2="540"/>
+    <rect class="head2" x="230" y="0" width="150" height="52" rx="14"/><text class="h" x="305" y="32" text-anchor="middle">Predict</text><line class="line" x1="305" y1="52" x2="305" y2="540"/>
+    <rect class="head" x="470" y="0" width="150" height="52" rx="14"/><text class="h" x="545" y="32" text-anchor="middle">Adapter</text><line class="line" x1="545" y1="52" x2="545" y2="540"/>
+    <rect class="head3" x="710" y="0" width="150" height="52" rx="14"/><text class="h" x="785" y="32" text-anchor="middle">LM</text><line class="line" x1="785" y1="52" x2="785" y2="540"/>
+    <rect class="head" x="950" y="0" width="190" height="52" rx="14"/><text class="h" x="1045" y="32" text-anchor="middle">Provider</text><line class="line" x1="1045" y1="52" x2="1045" y2="540"/>
+
+    <path class="msg" d="M70 110 L305 110"/><text class="p" x="188" y="100" text-anchor="middle">1. qa(question=...)</text>
+    <path class="msg" d="M305 190 L545 190"/><text class="p" x="425" y="180" text-anchor="middle">2. signature + inputs + demos</text>
+    <path class="ret" d="M545 250 L305 250"/><text class="p" x="425" y="242" text-anchor="middle">3. messages</text>
+    <path class="msg" d="M305 315 L785 315"/><text class="p" x="545" y="305" text-anchor="middle">4. lm(messages=...)</text>
+    <path class="msg" d="M785 380 L1045 380"/><text class="p" x="915" y="370" text-anchor="middle">5. completion request</text>
+    <path class="ret" d="M1045 445 L785 445"/><text class="p" x="915" y="437" text-anchor="middle">6. raw response</text>
+    <path class="ret" d="M785 495 L545 495"/><text class="p" x="665" y="487" text-anchor="middle">7. outputs</text>
+    <path class="ret" d="M545 545 L70 545"/><text class="p" x="307" y="537" text-anchor="middle">8. Prediction(result.answer)</text>
+  </g>
+
+  <text class="small" x="70" y="715">关键理解：Predict 负责调度，Adapter 负责翻译和解析，LM 负责实际模型调用。</text>
+</svg>

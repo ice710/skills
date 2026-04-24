@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DSPy 开源项目学习报告</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,600;6..96,800&family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap');
+
+    :root {
+      --bg: #242321;
+      --paper: #f8f4ea;
+      --panel: rgba(255, 253, 246, 0.88);
+      --panel-strong: #fffdf7;
+      --ink: #201a14;
+      --muted: #6f655b;
+      --line: rgba(32, 26, 20, 0.14);
+      --accent: #ff7a45;
+      --accent-2: #7c3aed;
+      --accent-soft: #fff0e8;
+      --mint: #98d4bb;
+      --lavender: #c7b8ea;
+      --pink: #f4b8c5;
+      --sky: #a8d8ea;
+      --cream: #ffe6a7;
+      --code: #1d1a17;
+      --radius: 24px;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+      --soft-shadow: 0 12px 34px rgba(32, 26, 20, 0.08);
+      --font-display: "Bodoni Moda", serif;
+      --font-body: "DM Sans", sans-serif;
+      --font-mono: "Space Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: var(--font-body);
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 8%, rgba(255, 230, 167, 0.22), transparent 24%),
+        radial-gradient(circle at 95% 18%, rgba(199, 184, 234, 0.18), transparent 26%),
+        linear-gradient(135deg, #242321 0%, #34302b 48%, #1e1d1b 100%);
+      line-height: 1.72;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px);
+      background-size: 42px 42px;
+      opacity: .7;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+      background: rgba(36, 35, 33, 0.82);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      color: var(--paper);
+    }
+
+    .bar {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 18px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(24px, 2.4vw, 34px);
+      letter-spacing: -0.045em;
+      line-height: .95;
+    }
+
+    .brand p {
+      margin: 7px 0 0;
+      color: rgba(248,244,234,.72);
+      font-size: 13px;
+    }
+
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    button {
+      border: 1px solid rgba(255,255,255,.18);
+      background: var(--accent);
+      color: #1d1a17;
+      border-radius: 999px;
+      padding: 9px 15px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 13px;
+      box-shadow: 0 10px 26px rgba(255,122,69,.25);
+    }
+
+    main {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 32px 28px 90px;
+      display: grid;
+      grid-template-columns: 292px minmax(0, 1fr);
+      gap: 26px;
+      position: relative;
+      z-index: 1;
+    }
+
+    aside {
+      position: sticky;
+      top: 104px;
+      align-self: start;
+      background: rgba(248, 244, 234, 0.94);
+      border: 1px solid rgba(255,255,255,.55);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    aside::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 8px;
+      background: linear-gradient(var(--mint), var(--lavender), var(--pink), var(--sky), var(--cream));
+    }
+
+    nav { display: grid; gap: 4px; }
+
+    nav a {
+      display: block;
+      color: var(--ink);
+      text-decoration: none;
+      padding: 10px 12px 10px 18px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: -0.01em;
+      transition: transform .2s ease, background .2s ease;
+    }
+
+    nav a:hover {
+      background: rgba(255, 122, 69, 0.12);
+      transform: translateX(3px);
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      margin-top: 16px;
+      padding: 13px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.58);
+      border: 1px dashed rgba(32,26,20,.18);
+    }
+
+    .content { display: grid; gap: 24px; }
+
+    section {
+      position: relative;
+      background:
+        radial-gradient(circle at 94% 8%, rgba(199,184,234,.18), transparent 23%),
+        radial-gradient(circle at 8% 92%, rgba(152,212,187,.16), transparent 26%),
+        var(--paper);
+      border: 1px solid rgba(255,255,255,.62);
+      border-radius: calc(var(--radius) + 8px);
+      box-shadow: var(--shadow);
+      padding: clamp(24px, 3vw, 42px);
+      scroll-margin-top: 118px;
+      overflow: hidden;
+    }
+
+    section::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 36px;
+      width: 22px;
+      height: 140px;
+      border-radius: 16px 0 0 16px;
+      background: var(--accent);
+      opacity: .75;
+    }
+
+    section:nth-of-type(2n)::after { background: var(--mint); }
+    section:nth-of-type(3n)::after { background: var(--lavender); }
+    section:nth-of-type(4n)::after { background: var(--pink); }
+
+    h2 {
+      margin: 0 0 8px;
+      font-family: var(--font-display);
+      font-size: clamp(31px, 4.4vw, 58px);
+      line-height: .94;
+      letter-spacing: -0.055em;
+      max-width: 13ch;
+    }
+
+    h3 {
+      margin: 24px 0 10px;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .desc {
+      color: var(--muted);
+      margin: 0 0 22px;
+      max-width: 76ch;
+      font-size: 15px;
+    }
+
+    p, li { font-size: 15px; }
+
+    ul, ol { padding-left: 1.25rem; }
+    li::marker { color: var(--accent); font-weight: 800; }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255,255,255,.68);
+      padding: 17px;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .card h3 { margin-top: 0; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 11px;
+      background: rgba(124,58,237,.10);
+      color: var(--accent-2);
+      font-size: 12px;
+      font-weight: 800;
+      margin: 0 6px 6px 0;
+      border: 1px solid rgba(124,58,237,.12);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.72);
+      margin: 14px 0;
+      box-shadow: var(--soft-shadow);
+    }
+
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      background: rgba(32,26,20,.055);
+      font-weight: 900;
+      color: #2d261f;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tbody tr:nth-child(even) td { background: rgba(255,255,255,.28); }
+
+    pre {
+      margin: 14px 0;
+      padding: 18px 20px;
+      overflow: auto;
+      background:
+        radial-gradient(circle at 100% 0%, rgba(255,122,69,.18), transparent 28%),
+        var(--code);
+      color: #f8f4ea;
+      border-radius: 18px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.65;
+      box-shadow: 0 16px 38px rgba(0,0,0,.18);
+    }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: .92em;
+    }
+
+    :not(pre) > code {
+      background: rgba(32,26,20,.075);
+      border: 1px solid rgba(32,26,20,.08);
+      border-radius: 8px;
+      padding: 1px 5px;
+    }
+
+    .svg-box {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255,255,255,.66);
+      overflow: hidden;
+      margin: 16px 0 18px;
+      padding: 10px;
+      box-shadow: var(--soft-shadow);
+    }
+
+    .svg-box img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 16px;
+    }
+
+    .small { color: var(--muted); font-size: 13px; }
+    .footer-note { color: var(--muted); text-align: center; margin-top: 22px; font-size: 13px; }
+
+    @media (max-width: 980px) {
+      main { grid-template-columns: 1fr; padding: 22px 16px 70px; }
+      aside { position: static; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .bar { align-items: flex-start; flex-direction: column; padding: 16px; }
+      section::after { display: none; }
+    }
+
+    @media print {
+      header, aside, .no-print { display: none !important; }
+      body { background: white; }
+      body::before { display: none; }
+      main { display: block; max-width: none; padding: 0; }
+      section { box-shadow: none; break-inside: avoid; margin-bottom: 14px; border-color: #ddd; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="bar">
+      <div class="brand">
+        <h1>DSPy 开源项目学习报告</h1>
+        <p>目标：理解 DSPy 的架构、核心调用链与自动 prompt 优化机制。</p>
+      </div>
+      <div class="actions no-print">
+        <button onclick="window.print()">打印 / 存 PDF</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <aside>
+      <nav>
+        <a href="#overview">01 项目速览</a>
+        <a href="#feynman">02 核心概念解释</a>
+        <a href="#run">03 跑通项目</a>
+        <a href="#map">04 项目地图</a>
+        <a href="#architecture">05 架构图</a>
+        <a href="#flow">06 流程图</a>
+        <a href="#sequence">07 时序图</a>
+        <a href="#source">08 源码追踪</a>
+        <a href="#optimization">09 Prompt 优化</a>
+        <a href="#qa-summary">10 问题与回答沉淀</a>
+        <a href="#unknowns">11 不懂点与补洞</a>
+        <a href="#final">12 最终笔记</a>
+      </nav>
+      <div class="hint">本报告基于当前仓库源码阅读与对话学习过程生成。图形资产位于同目录下的 SVG 文件，可单独打开或嵌入其他文档。</div>
+    </aside>
+
+    <div class="content">
+      <section id="overview">
+        <h2>01 项目速览</h2>
+        <p class="desc">先建立全局认知：DSPy 是什么、解决什么问题、为什么值得学。</p>
+        <div class="grid-2">
+          <div class="card"><h3>项目名称</h3><p>DSPy</p></div>
+          <div class="card"><h3>项目定位</h3><p>用于编程、组合、评估和优化语言模型程序的 Python 框架。</p></div>
+          <div class="card"><h3>技术栈</h3><p>Python 3.10+、Pydantic、LiteLLM、pytest、ruff、diskcache、GEPA。</p></div>
+          <div class="card"><h3>主要用户</h3><p>LLM 应用工程师、RAG/Agent 开发者、prompt optimization 研究者、希望把 prompt 工程系统化的人。</p></div>
+        </div>
+        <h3>一句话解释</h3>
+        <p><strong>DSPy 让你用 Python 模块来写 LLM 程序，再用优化器自动改进 instructions、few-shot 示例、规则甚至模型权重。</strong></p>
+        <h3>核心价值</h3>
+        <ul>
+          <li>把 prompt 从脆弱字符串提升为可组合、可测试、可优化的程序结构。</li>
+          <li>通过 Signature 明确输入输出边界，通过 Module 组合复杂流程。</li>
+          <li>通过 Teleprompter 把 prompt engineering 变成基于数据和 metric 的搜索问题。</li>
+          <li>通过 Adapter 把结构化任务翻译成模型可理解的 messages，并把模型输出解析回结构化对象。</li>
+        </ul>
+      </section>
+
+      <section id="feynman">
+        <h2>02 核心概念解释</h2>
+        <p class="desc">用简单语言解释 DSPy 的核心概念和模块关系。</p>
+        <h3>生活类比：AI 流水线工厂</h3>
+        <table>
+          <thead><tr><th>现实类比</th><th>DSPy 概念</th><th>一句话解释</th></tr></thead>
+          <tbody>
+            <tr><td>产品规格说明书</td><td>Signature</td><td>规定任务有哪些输入栏、输出栏。</td></tr>
+            <tr><td>工位上的工人</td><td>Predict / ChainOfThought / ReAct</td><td>按任务规格执行一次或一组模型调用。</td></tr>
+            <tr><td>装配线</td><td>Module</td><td>把多个工位组合成完整 AI 程序。</td></tr>
+            <tr><td>外包工厂</td><td>LM / Provider</td><td>真正产生语言输出的模型服务。</td></tr>
+            <tr><td>翻译官</td><td>Adapter</td><td>把结构化字段翻译成 prompt/messages，再把回答解析回来。</td></tr>
+            <tr><td>生产优化顾问</td><td>Teleprompter</td><td>用数据和评估自动挑示例、改说明、归纳规则。</td></tr>
+            <tr><td>质检员</td><td>Evaluate / metric</td><td>判断某个程序版本效果是否更好。</td></tr>
+          </tbody>
+        </table>
+        <h3>不用术语的解释</h3>
+        <p>DSPy 不是让你手写一大段 prompt，而是先把任务拆成“输入是什么、输出是什么、处理模块是什么、用什么标准算好”。然后它把这些结构自动翻译成模型能读懂的消息。如果你提供训练样本和评价函数，DSPy 还能自动尝试不同说明和示例组合，选出效果更好的版本。</p>
+      </section>
+
+      <section id="run">
+        <h2>03 跑通项目</h2>
+        <p class="desc">从“看项目”进入“用项目”。</p>
+        <h3>安装方式</h3>
+        <pre><code>pip install dspy</code></pre>
+        <h3>本地开发依赖</h3>
+        <p>仓库使用 <code>pyproject.toml</code> 管理包元信息与依赖，要求 Python <code>&gt;=3.10, &lt;3.15</code>。开发依赖包括 pytest、ruff、pre-commit 等。</p>
+        <h3>最小可运行示例</h3>
+        <pre><code>import dspy
+
+lm = dspy.LM("openai/gpt-4o-mini")
+dspy.configure(lm=lm)
+
+qa = dspy.Predict("question -> answer")
+result = qa(question="What is DSPy?")
+
+print(result.answer)</code></pre>
+        <h3>运行成功标准</h3>
+        <ul>
+          <li>已通过 <code>dspy.configure(lm=...)</code> 配置语言模型。</li>
+          <li><code>Predict</code> 调用返回 <code>Prediction</code> 对象。</li>
+          <li>可以通过 <code>result.answer</code> 访问结构化输出字段。</li>
+        </ul>
+        <h3>常见报错</h3>
+        <ul>
+          <li>未配置 LM：<code>No LM is loaded</code>。</li>
+          <li>把 LM 配成字符串：应该用 <code>dspy.LM("provider/model")</code>，不是直接传字符串。</li>
+          <li>输入字段名和 Signature 不一致：多余字段会被忽略，缺字段会 warning。</li>
+        </ul>
+      </section>
+
+      <section id="map">
+        <h2>04 项目地图</h2>
+        <p class="desc">理解目录边界和关键文件。</p>
+        <table>
+          <thead><tr><th>目录 / 文件</th><th>职责</th><th>学习顺序</th></tr></thead>
+          <tbody>
+            <tr><td><code>dspy/__init__.py</code></td><td>顶层 API 汇总，用户 import dspy 后能直接访问核心类。</td><td>第 1 个看，建立 API 地图。</td></tr>
+            <tr><td><code>dspy/signatures/</code></td><td>定义任务输入输出契约，支持字符串签名和类签名。</td><td>第 2 个看。</td></tr>
+            <tr><td><code>dspy/predict/</code></td><td>Predict、ChainOfThought、ReAct 等执行模块。</td><td>第 3 个看。</td></tr>
+            <tr><td><code>dspy/primitives/</code></td><td>Module、Example、Prediction 等基础数据结构。</td><td>第 4 个看。</td></tr>
+            <tr><td><code>dspy/adapters/</code></td><td>结构化任务和模型 messages 之间的双向转换。</td><td>理解 prompt 生成时看。</td></tr>
+            <tr><td><code>dspy/clients/</code></td><td>LM、BaseLM、cache、provider，负责实际模型调用。</td><td>理解模型请求时看。</td></tr>
+            <tr><td><code>dspy/teleprompt/</code></td><td>Prompt/program 优化器，包含 BootstrapFewShot、MIPROv2、GEPA 等。</td><td>理解自动优化时看。</td></tr>
+            <tr><td><code>dspy/evaluate/</code></td><td>程序评估与指标。</td><td>理解 optimizer 评分时看。</td></tr>
+            <tr><td><code>tests/</code></td><td>按模块组织的测试，是补洞和验证行为的好入口。</td><td>遇到不确定行为时看。</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="architecture">
+        <h2>05 架构图</h2>
+        <p class="desc">DSPy 的整体结构：用户代码、核心抽象、模型调用、优化评估之间的关系。</p>
+        <div class="svg-box"><img src="dspy_architecture.svg" alt="DSPy 架构图" /></div>
+        <p>核心主线是 <code>Signature → Predict/Module → Adapter → LM → Provider</code>。旁路能力包括 <code>Teleprompter</code> 做优化、<code>Evaluate</code> 做评估、<code>Retrievers</code> 支持 RAG。</p>
+      </section>
+
+      <section id="flow">
+        <h2>06 流程图</h2>
+        <p class="desc">一次 <code>dspy.Predict</code> 调用如何从输入走到结构化输出。</p>
+        <div class="svg-box"><img src="dspy_predict_flow.svg" alt="DSPy Predict 流程图" /></div>
+        <p>这条链路的关键判断点是：是否有 LM、输入字段是否匹配 Signature、使用什么 Adapter、模型类型是 chat/text/responses、是否启用 cache。</p>
+      </section>
+
+      <section id="sequence">
+        <h2>07 时序图</h2>
+        <p class="desc">对象之间按时间顺序如何协作。</p>
+        <div class="svg-box"><img src="dspy_predict_sequence.svg" alt="DSPy Predict 时序图" /></div>
+        <p>一次调用中，用户先配置 <code>Settings</code>，创建 <code>Predict</code>，调用时进入 <code>Module.__call__</code>，随后由 <code>Adapter</code> 构造消息，<code>LM</code> 经 LiteLLM 调 provider，最后解析为 <code>Prediction</code>。</p>
+      </section>
+
+      <section id="source">
+        <h2>08 源码追踪</h2>
+        <p class="desc">围绕一条主链路读源码：<code>qa = dspy.Predict("question -> answer")</code> 与 <code>qa(question="...")</code>。</p>
+        <h3>主调用链</h3>
+        <pre><code>Predict.__init__
+  -> ensure_signature
+  -> Signature / make_signature / _parse_signature
+
+Predict.__call__
+  -> Module.__call__
+  -> Predict.forward
+  -> Predict._forward_preprocess
+  -> ChatAdapter.__call__
+  -> Adapter.__call__
+  -> Adapter.format
+  -> BaseLM.__call__
+  -> LM.forward
+  -> BaseLM._process_lm_response
+  -> Adapter._call_postprocess
+  -> ChatAdapter.parse
+  -> Prediction.from_completions</code></pre>
+        <table>
+          <thead><tr><th>文件路径</th><th>关键类 / 函数</th><th>职责</th><th>学习结论</th></tr></thead>
+          <tbody>
+            <tr><td><code>dspy/predict/predict.py:58</code></td><td><code>Predict.__init__</code></td><td>接收字符串或 Signature 类，调用 <code>ensure_signature</code> 建立任务契约。</td><td>Predict 创建时并不调模型，只保存任务结构和配置。</td></tr>
+            <tr><td><code>dspy/signatures/signature.py:519</code></td><td><code>ensure_signature</code></td><td>判断签名是字符串还是已有 Signature 类。</td><td>字符串签名最终会动态生成 Signature 子类。</td></tr>
+            <tr><td><code>dspy/signatures/signature.py:615</code></td><td><code>_parse_signature</code></td><td>按 <code>-></code> 切分输入和输出，左边变 InputField，右边变 OutputField。</td><td>Signature 的本质是输入输出字段契约。</td></tr>
+            <tr><td><code>dspy/signatures/signature.py:641</code></td><td><code>_parse_field_string</code></td><td>把字段串伪装成 Python 函数参数，用 AST 解析字段名和类型。</td><td>未写类型时默认 <code>str</code>。</td></tr>
+            <tr><td><code>dspy/primitives/module.py:93</code></td><td><code>Module.__call__</code></td><td>统一模块调用入口，处理上下文、callback、usage tracking。</td><td>所有 DSPy 模块都有统一运行机制。</td></tr>
+            <tr><td><code>dspy/predict/predict.py:138</code></td><td><code>_forward_preprocess</code></td><td>合并 config、读取 LM、校验输入字段和类型。</td><td>这里决定本次调用用哪个 LM、哪个 Signature、哪些 demos。</td></tr>
+            <tr><td><code>dspy/adapters/base.py:177</code></td><td><code>Adapter.__call__</code></td><td>完成 preprocess → format → lm → postprocess。</td><td>Adapter 是结构化程序和 prompt/messages 之间的翻译层。</td></tr>
+            <tr><td><code>dspy/adapters/base.py:222</code></td><td><code>Adapter.format</code></td><td>生成 system message、few-shot messages、当前 user message。</td><td>prompt 的布局主要由 Adapter 决定。</td></tr>
+            <tr><td><code>dspy/adapters/chat_adapter.py:210</code></td><td><code>ChatAdapter.parse</code></td><td>用 <code>[[ ## field ## ]]</code> 标记解析输出字段。</td><td>模型必须按字段格式输出，DSPy 才能解析成结构化结果。</td></tr>
+            <tr><td><code>dspy/clients/base_lm.py:121</code></td><td><code>BaseLM.__call__</code></td><td>调用 <code>forward</code> 并处理模型响应。</td><td>LM 子类只需实现 forward。</td></tr>
+            <tr><td><code>dspy/clients/lm.py:159</code></td><td><code>LM.forward</code></td><td>合并参数、选择 chat/text/responses completion、处理 cache/retry、调用 LiteLLM。</td><td>真正模型请求在这里发生。</td></tr>
+            <tr><td><code>dspy/primitives/example.py:3</code></td><td><code>Example</code></td><td>字段化数据容器，支持 dict 和点号访问。</td><td>Example 是 train/dev/test 样本、few-shot demos、metric 输入的统一数据行。</td></tr>
+            <tr><td><code>dspy/primitives/prediction.py:3</code></td><td><code>Prediction</code></td><td>继承 Example，保存模型输出字段与 completions。</td><td><code>result.answer</code> 来自 Example 的 <code>__getattr__</code>。</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="optimization">
+        <h2>09 自动化优化 Prompt</h2>
+        <p class="desc">DSPy 的优化不是随便改一个 prompt 字符串，而是在固定 Adapter 布局中搜索更好的语义组件。</p>
+        <h3>统一优化框架</h3>
+        <div class="svg-box"><img src="dspy_optimization_flow_animated.svg" alt="DSPy Prompt 自动优化流程动态图" /></div>
+        <pre><code>student program + trainset + metric
+        ↓
+optimizer.compile(...)
+        ↓
+compiled program</code></pre>
+        <h3>主要优化内容</h3>
+        <table>
+          <thead><tr><th>Prompt / Program 组件</th><th>是否优化</th><th>典型优化器</th></tr></thead>
+          <tbody>
+            <tr><td>few-shot demos</td><td>会</td><td><code>LabeledFewShot</code>, <code>BootstrapFewShot</code>, <code>MIPROv2</code>, <code>SIMBA</code></td></tr>
+            <tr><td>demos 组合 / 选择</td><td>会</td><td><code>BootstrapFewShotWithRandomSearch</code>, <code>BootstrapFewShotWithOptuna</code>, <code>MIPROv2</code></td></tr>
+            <tr><td>instructions / 任务说明</td><td>会</td><td><code>COPRO</code>, <code>MIPROv2</code>, <code>GEPA</code>, <code>InferRules</code></td></tr>
+            <tr><td>归纳规则</td><td>会</td><td><code>InferRules</code>, <code>SIMBA</code>, <code>GEPA</code></td></tr>
+            <tr><td>output prefix</td><td>部分会</td><td><code>COPRO</code></td></tr>
+            <tr><td>模型权重</td><td>会</td><td><code>BootstrapFinetune</code>, <code>GRPO</code></td></tr>
+            <tr><td>prompt 布局顺序</td><td>默认不会</td><td>通常由 <code>Adapter</code> 固定；如需优化需自定义 Adapter 或手写候选搜索。</td></tr>
+          </tbody>
+        </table>
+        <h3>关键优化器理解</h3>
+        <div class="grid-2">
+          <div class="card"><h3>BootstrapFewShot</h3><p>用 teacher/student 跑训练样本，记录成功 trace，把每个 Predict 的输入输出转换成 demos。</p></div>
+          <div class="card"><h3>MIPROv2</h3><p>同时生成多组 demos 和多条 instruction 候选，再用评估搜索最佳组合。</p></div>
+          <div class="card"><h3>GEPA</h3><p>捕获 trace，反思错误原因，进化式提出新 instruction。</p></div>
+          <div class="card"><h3>SIMBA</h3><p>用 mini-batch 找高价值样本，追加成功 demo 或反思规则。</p></div>
+        </div>
+        <h3>重要设计取舍</h3>
+        <p>默认 optimizer 优化的是 prompt 内容组件，而不是 system/user/assistant 的布局顺序。位置顺序主要由 <code>ChatAdapter</code> / <code>JSONAdapter</code> 决定。若要实验“rules 放前面还是后面”“few-shot 放哪”，应自定义 Adapter 或把不同 layout 包装成不同 program 候选再评估。</p>
+      </section>
+
+      <section id="qa-summary">
+        <h2>10 问题与回答沉淀</h2>
+        <p class="desc">这一节记录学习过程中提出的关键问题，以及对应形成的理解结论。</p>
+
+        <h3>Signature 相关</h3>
+        <table>
+          <thead><tr><th>问题</th><th>回答总结</th><th>学习结论</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Signature 的输入是什么？所有字符串都可以吗，还是预定义好的？</td>
+              <td>Signature 可以接收符合格式的字符串，也可以接收预定义的 <code>dspy.Signature</code> 子类。字符串不是任意 prompt，而必须表达 <code>输入字段 -> 输出字段</code>，例如 <code>question -> answer</code>。</td>
+              <td>Signature 是字段契约，不是自然语言 prompt。</td>
+            </tr>
+            <tr>
+              <td>如果输入是 context、question、流程规则，输出是多字段 JSON，应该怎么表示？</td>
+              <td>推荐用类形式 Signature：<code>context</code>、<code>question</code>、<code>rules</code> 作为 <code>InputField</code>，<code>answer</code>、<code>reasoning</code>、<code>confidence</code>、<code>sources</code> 作为 <code>OutputField</code>。如果想强化 JSON 输出，可配置 <code>dspy.JSONAdapter()</code>。</td>
+              <td>多字段 JSON 最好拆成多个 typed OutputField；复杂嵌套可用 Pydantic model。</td>
+            </tr>
+            <tr>
+              <td>Signature 具体如何从字符串生成字段？</td>
+              <td><code>ensure_signature</code> 发现输入是字符串后调用 <code>Signature(...)</code>；<code>SignatureMeta.__call__</code> 实际返回 <code>make_signature</code> 创建的动态类；<code>_parse_signature</code> 按 <code>-></code> 切分输入输出；<code>_parse_field_string</code> 把字段串伪装成 Python 函数参数并用 AST 解析字段名和类型；最后用 Pydantic <code>create_model</code> 创建 Signature 子类。</td>
+              <td><code>Signature("question -> answer")</code> 本质上动态生成了一个带 InputField / OutputField 的类。</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Example / Prediction 相关</h3>
+        <table>
+          <thead><tr><th>问题</th><th>回答总结</th><th>学习结论</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Example 的作用是不是：作为测试验证训练样本，以及作为 few-shot？</td>
+              <td>是。<code>Example</code> 是 DSPy 里的标准数据行：在 train/dev/test 中表示输入和标签；被放进 <code>predictor.demos</code> 后，会由 Adapter 转成 few-shot messages。</td>
+              <td>Example 是数据，不是 prompt；Adapter 才负责把 Example 格式化成 prompt。</td>
+            </tr>
+            <tr>
+              <td>Example 还有别的用处吗？</td>
+              <td>还有：作为 metric 的 gold 输入对象、optimizer / teleprompter 的搜索材料、运行过程的中间状态容器、<code>Prediction</code> 的基类，以及数据格式转换桥梁。</td>
+              <td>Example 是 DSPy 里统一承载字段化数据的基础容器。</td>
+            </tr>
+            <tr>
+              <td>为什么可以写 <code>result.answer</code>？</td>
+              <td><code>Prediction</code> 继承 <code>Example</code>，字段存在 <code>_store</code> 中。<code>Example.__getattr__</code> 会从 <code>_store</code> 查字段，所以 <code>result.answer</code> 本质是读取 <code>result._store["answer"]</code>。</td>
+              <td>Prediction 是结构化结果容器，不是普通字符串。</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Prompt 生成与设计相关</h3>
+        <table>
+          <thead><tr><th>问题</th><th>回答总结</th><th>学习结论</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>怎么把 Signature、输入、Example 这种结构化形式转成 LLM 可以理解的 prompt？</td>
+              <td>由 Adapter 完成。默认 <code>ChatAdapter</code> 会把 Signature 转成 system message 中的字段说明、输出结构和任务目标；把 demos 转成 few-shot user/assistant 消息；把当前 inputs 转成 user message；模型输出再由 <code>parse</code> 解析回字段字典。</td>
+              <td>Adapter 是结构化程序和 LLM messages 之间的双向翻译层。</td>
+            </tr>
+            <tr>
+              <td>一个 prompt 中的角色、任务、目标、输入、输出、执行流程、思维指导、样例应该怎么用 DSPy 表达？</td>
+              <td>固定角色/任务/目标/流程放 <code>Signature</code> docstring；动态输入放 <code>InputField</code>；结构化返回放 <code>OutputField</code>；样例放 <code>Example</code> demos；输出 JSON 用 typed OutputField 和 <code>JSONAdapter</code>；复杂推理可用 <code>ChainOfThought</code>。</td>
+              <td>传统大 prompt 应拆成 docstring、InputField、OutputField、Example、Adapter 几个结构化组件。</td>
+            </tr>
+            <tr>
+              <td>如果想指导 LLM 怎么思考，原则或流程应该放在哪里？</td>
+              <td>固定原则放 Signature docstring；每次请求变化的规则放 <code>rules</code> 等 InputField；希望模型显式返回的判断依据放 <code>reasoning</code> / <code>evidence_summary</code> 等 OutputField；想让模型模仿的思考方式放 Example demos。</td>
+              <td>“怎么思考”也要区分固定规则、动态规则、可见输出和示例学习。</td>
+            </tr>
+            <tr>
+              <td>思维链怎么使用？</td>
+              <td>使用 <code>dspy.ChainOfThought(Signature)</code>。它会在原 Signature 的输出前自动加入 reasoning 类字段，引导模型先产生推理说明再生成最终输出。生产场景中更建议输出简短依据，而不是长篇完整隐藏思维链。</td>
+              <td>ChainOfThought 是在 Signature 上扩展推理字段的模块，不是手写 “step by step” prompt。</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Metric 与优化相关</h3>
+        <table>
+          <thead><tr><th>问题</th><th>回答总结</th><th>学习结论</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>如果初始没有 Example，DSPy 会自动挖掘吗？</td>
+              <td>不会凭空挖掘。没有 trainset / metric 时，DSPy 只会 zero-shot 调用。提供 trainset、metric 和 optimizer 后，DSPy 可以从数据和评价信号中筛选、生成或优化 demos。</td>
+              <td>自动优化需要输入样本、评价标准和 optimizer。</td>
+            </tr>
+            <tr>
+              <td>metric 必须是客观公式吗，还是可以是自然语言感受？</td>
+              <td>metric 最终必须是可执行函数，但函数内部可以是客观规则，也可以调用 LLM judge 按自然语言 rubric 打分。自然语言标准要写成明确、可判定的 rubric。</td>
+              <td>metric 的外壳是代码函数，判断标准可以是规则或 LLM judge。</td>
+            </tr>
+            <tr>
+              <td>DSPy 自动优化 prompt 都优化哪些内容？</td>
+              <td>主要优化 few-shot demos、demos 组合、instructions、归纳规则、output prefix；有些优化器还优化模型权重或 program composition。代表优化器包括 <code>BootstrapFewShot</code>、<code>MIPROv2</code>、<code>GEPA</code>、<code>SIMBA</code>、<code>BootstrapFinetune</code>。</td>
+              <td>DSPy 优化的是 prompt 的结构化语义组件，而不是单个字符串。</td>
+            </tr>
+            <tr>
+              <td>这些优化会优化 prompt 中输入、instructions、rules、few-shot 的位置顺序吗？</td>
+              <td>默认不会。多数 Teleprompter 优化内容组件，例如 instructions 写什么、demos 选哪些、rules 加什么；prompt 的整体布局顺序由 Adapter 决定。若要优化布局，需要自定义 Adapter 或把不同 layout 作为候选 program 评估。</td>
+              <td>DSPy 默认在固定 prompt 框架里搜索内容，不搜索 layout。</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="unknowns">
+        <h2>11 不懂点与补洞</h2>
+        <p class="desc">目前已经掌握主线，下面是不应假装完全理解、适合继续补洞的地方。</p>
+        <table>
+          <thead><tr><th>不懂点</th><th>为什么重要</th><th>补洞计划</th></tr></thead>
+          <tbody>
+            <tr><td><code>JSONAdapter</code> 与 <code>ChatAdapter</code> 的差异</td><td>决定多字段 JSON 输出如何被约束和解析。</td><td>阅读 <code>dspy/adapters/json_adapter.py</code>，对比 format/parse 行为。</td></tr>
+            <tr><td><code>ChainOfThought</code> 如何扩展 Signature</td><td>理解思维链字段如何被插入输出。</td><td>阅读 <code>dspy/predict/chain_of_thought.py</code>，追 <code>reasoning</code> 字段生成。</td></tr>
+            <tr><td><code>BootstrapFewShot</code> 的 trace 转 demo 细节</td><td>这是 DSPy self-improving 的代表机制。</td><td>精读 <code>dspy/teleprompt/bootstrap.py</code> 的 <code>_bootstrap_one_example</code> 和 <code>_train</code>。</td></tr>
+            <tr><td><code>MIPROv2</code> 搜索空间构造</td><td>代表综合优化 instructions + demos 的能力。</td><td>读 <code>_bootstrap_fewshot_examples</code>、<code>_propose_instructions</code>、<code>_optimize_prompt_parameters</code>。</td></tr>
+            <tr><td>Prompt 优化算法的系统理解</td><td>目前已经知道 DSPy 会优化 demos、instructions、rules、prefix 和模型权重，但还需要进一步区分不同算法的搜索策略：随机搜索、贝叶斯优化、反思式进化、mini-batch ascent、监督微调和强化学习分别适合什么场景。</td><td>按算法类型补洞：1. 对比 <code>BootstrapFewShotWithRandomSearch</code> 和 <code>MIPROv2</code> 的搜索方式；2. 阅读 <code>GEPA</code> 如何用 trace feedback 生成新 instruction；3. 阅读 <code>SIMBA</code> 如何基于 mini-batch 追加 demo/rule；4. 对比 <code>BootstrapFinetune</code> 与 <code>GRPO</code> 的权重优化目标；5. 用同一小数据集跑至少两个 optimizer，记录候选生成、评分和写回结果。</td></tr>
+            <tr><td>不同 prompt optimizer 的适用边界</td><td>知道有哪些 optimizer 还不够，实际使用时要能判断何时用 LabeledFewShot、BootstrapFewShot、MIPROv2、GEPA 或 SIMBA。</td><td>制作一张选择表：已有高质量标注 → <code>LabeledFewShot</code>；需要从成功轨迹构造 demos → <code>BootstrapFewShot</code>；同时优化 instruction+demos → <code>MIPROv2</code>；需要基于错误反思改 instruction → <code>GEPA</code>；需要迭代追加规则或示例 → <code>SIMBA</code>。</td></tr>
+            <tr><td>自定义 Adapter 的最佳实践</td><td>如果要优化 prompt 布局，必须理解 Adapter 扩展点。</td><td>写一个最小 Adapter，改变 system/user message 顺序并用 Evaluate 比较。</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="final">
+        <h2>12 最终学习笔记</h2>
+        <h3>项目解决什么问题</h3>
+        <p>DSPy 解决的是 LLM 应用开发中 prompt 脆弱、难复用、难评估、难系统优化的问题。它把 prompt 工程提升为可编程、可组合、可评估、可优化的语言模型程序工程。</p>
+        <h3>核心设计思想</h3>
+        <ul>
+          <li><strong>Signature</strong>：用字段契约定义任务，而不是直接写 prompt 字符串。</li>
+          <li><strong>Module</strong>：把一次或多次模型调用组合成程序。</li>
+          <li><strong>Adapter</strong>：把结构化任务翻译成 LLM messages，并把输出解析回字段。</li>
+          <li><strong>Example</strong>：统一表示数据样本、few-shot demo、metric 的 gold 输入。</li>
+          <li><strong>Teleprompter</strong>：用 trainset 和 metric 自动优化 prompt 组件或模型权重。</li>
+        </ul>
+        <h3>我现在能讲清的主链路</h3>
+        <p>用户定义 <code>Signature</code>，<code>Predict</code> 按 Signature 接收输入，<code>Module.__call__</code> 统一处理上下文，<code>Adapter</code> 把字段和 demos 组织成 messages，<code>LM.forward</code> 调 LiteLLM 请求外部模型，返回结果再由 Adapter 解析成字段字典，最后封装为 <code>Prediction</code>，所以用户能访问 <code>result.answer</code>。</p>
+        <h3>我现在能讲清的优化机制</h3>
+        <p>DSPy 的 prompt 优化是在固定 Adapter 模板下优化语义组件：如 instructions、few-shot demos、归纳规则和 output prefix。优化器会生成候选程序，用 trainset / valset 和 metric 评估，选择效果最好的候选并返回 compiled program。它默认不搜索 prompt 布局顺序；布局由 Adapter 控制。</p>
+        <h3>下一步行动</h3>
+        <ol>
+          <li>精读 <code>ChatAdapter</code> 与 <code>JSONAdapter</code>，理解结构化输出解析差异。</li>
+          <li>精读 <code>BootstrapFewShot</code>，验证 trace 如何变成 demos。</li>
+          <li>用一个小 QA 数据集跑 <code>BootstrapFewShot</code> 和 <code>MIPROv2</code>，观察 compiled program 的 demos / instructions 如何变化。</li>
+          <li>尝试自定义 Adapter，实验 prompt 布局对效果的影响。</li>
+        </ol>
+        <p class="footer-note">学习验收：现在应该可以用 10 分钟讲清 DSPy 是什么、一次 Predict 怎么跑、Example 有什么用、prompt 如何生成、以及 Teleprompter 优化了哪些内容。</p>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

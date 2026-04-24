@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>费曼学习法 · 开源项目学习报告</title>
+  <style>
+    :root {
+      --bg: #f7f7f4;
+      --panel: #ffffff;
+      --ink: #1f2933;
+      --muted: #667085;
+      --line: #d8d8d2;
+      --accent: #111827;
+      --accent-soft: #eef2ff;
+      --radius: 18px;
+      --shadow: 0 18px 45px rgba(16, 24, 40, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at top left, #fff 0, var(--bg) 40%, #f1f0eb 100%);
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(14px);
+      background: rgba(247, 247, 244, 0.85);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .bar {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 16px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    button, label.file-button {
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #fff;
+      border-radius: 999px;
+      padding: 9px 14px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+      box-shadow: 0 8px 18px rgba(17, 24, 39, 0.12);
+    }
+
+    button.secondary, label.secondary {
+      background: #fff;
+      color: var(--accent);
+      box-shadow: none;
+    }
+
+    button.danger {
+      border-color: #b42318;
+      background: #b42318;
+    }
+
+    input[type="file"] { display: none; }
+
+    main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 22px 80px;
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 22px;
+    }
+
+    aside {
+      position: sticky;
+      top: 92px;
+      align-self: start;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    nav a {
+      display: block;
+      color: var(--ink);
+      text-decoration: none;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-weight: 650;
+      font-size: 14px;
+    }
+
+    nav a:hover { background: var(--accent-soft); }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px dashed var(--line);
+    }
+
+    .content {
+      display: grid;
+      gap: 18px;
+    }
+
+    section {
+      background: rgba(255,255,255,0.92);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      scroll-margin-top: 110px;
+    }
+
+    section h2 {
+      margin: 0 0 6px;
+      font-size: 24px;
+      letter-spacing: -0.03em;
+    }
+
+    section .desc {
+      color: var(--muted);
+      margin: 0 0 18px;
+      line-height: 1.6;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+
+    .field {
+      display: grid;
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      font-weight: 750;
+      font-size: 13px;
+      color: #344054;
+    }
+
+    input[type="text"], textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 13px;
+      font: inherit;
+      color: var(--ink);
+      background: #fff;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    textarea.tall { min-height: 220px; }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+      padding: 15px;
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .svg-box {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fffefc;
+      overflow: hidden;
+      margin: 10px 0 12px;
+    }
+
+    .svg-box svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .asset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .asset {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .asset img {
+      width: 100%;
+      max-height: 220px;
+      object-fit: contain;
+      background: #fafafa;
+      border: 1px solid #eee;
+      border-radius: 12px;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: #f2f4f7;
+      color: #344054;
+      font-size: 12px;
+      font-weight: 700;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th { background: #f8fafc; }
+    tr:last-child td { border-bottom: none; }
+
+    .footer-note {
+      color: var(--muted);
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+      main { grid-template-columns: 1fr; }
+      aside { position: static; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .bar { align-items: flex-start; flex-direction: column; }
+      .actions { justify-content: flex-start; }
+    }
+
+    @media print {
+      header, aside, .no-print { display: none !important; }
+      body { background: #fff; }
+      main { display: block; max-width: none; padding: 0; }
+      section { box-shadow: none; break-inside: avoid; margin-bottom: 14px; }
+      textarea, input { border: none; padding: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="bar">
+      <div class="brand">
+        <h1>费曼学习法 · 开源项目学习报告</h1>
+        <p>用“能不能讲给别人听懂”作为源码学习的验收标准。</p>
+      </div>
+      <div class="actions no-print">
+        <button onclick="saveReport()">保存到浏览器</button>
+        <button class="secondary" onclick="exportHtml()">导出 HTML</button>
+        <button class="secondary" onclick="window.print()">打印 / 存 PDF</button>
+        <button class="danger" onclick="clearReport()">清空</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <aside>
+      <nav>
+        <a href="#overview">01 项目速览</a>
+        <a href="#feynman">02 费曼解释</a>
+        <a href="#architecture">03 架构图</a>
+        <a href="#flow">04 流程图</a>
+        <a href="#sequence">05 时序图</a>
+        <a href="#source">06 源码追踪</a>
+        <a href="#unknowns">07 不懂点与补洞</a>
+        <a href="#assets">08 Excalidraw / SVG 资产库</a>
+        <a href="#final">09 最终学习笔记</a>
+      </nav>
+      <div class="hint">
+        推荐用 Excalidraw 画图后导出 SVG，再上传到本报告的资产库。文字内容会保存到本地浏览器；导出 HTML 后可作为完整学习档案长期保存。
+      </div>
+    </aside>
+
+    <div class="content">
+      <section id="overview">
+        <h2>01 项目速览</h2>
+        <p class="desc">先建立全局地图，不急着钻源码。目标是知道项目为什么存在、适合学什么。</p>
+        <div class="grid-2">
+          <div class="field"><label>项目名称</label><input data-save id="projectName" type="text" placeholder="例如：LangChain / React / Redis" /></div>
+          <div class="field"><label>项目地址</label><input data-save id="projectUrl" type="text" placeholder="GitHub URL" /></div>
+          <div class="field"><label>技术栈</label><input data-save id="techStack" type="text" placeholder="语言、框架、数据库、协议等" /></div>
+          <div class="field"><label>学习目标</label><input data-save id="learningGoal" type="text" placeholder="理解架构 / 学源码设计 / 贡献 PR / 学某项技术" /></div>
+        </div>
+        <div class="field"><label>一句话解释这个项目</label><textarea data-save id="oneSentence" placeholder="这个项目是一个……，用来解决……问题。"></textarea></div>
+        <div class="grid-3">
+          <div class="field"><label>主要用户</label><textarea data-save id="users" placeholder="谁会使用它？"></textarea></div>
+          <div class="field"><label>核心功能</label><textarea data-save id="features" placeholder="它提供哪些关键能力？"></textarea></div>
+          <div class="field"><label>为什么值得学习</label><textarea data-save id="whyLearn" placeholder="技术价值、架构价值、工程实践价值。"></textarea></div>
+        </div>
+      </section>
+
+      <section id="feynman">
+        <h2>02 费曼解释</h2>
+        <p class="desc">把项目讲给没看过源码的人听。先类比，再映射技术概念。</p>
+        <div class="field"><label>生活类比</label><textarea data-save id="analogy" class="tall" placeholder="如果把这个项目比作现实系统，它像什么？例如：自动化工厂、交通调度中心、插件化工具箱……"></textarea></div>
+        <div class="grid-2">
+          <div class="field"><label>核心角色</label><textarea data-save id="coreRoles" placeholder="模块、组件、服务、插件、数据结构分别像什么角色？"></textarea></div>
+          <div class="field"><label>数据 / 请求 / 任务如何流动</label><textarea data-save id="dataFlowText" placeholder="用户输入从哪里进入？经过哪些处理？最后输出什么？"></textarea></div>
+        </div>
+        <div class="field"><label>不用术语的解释版本</label><textarea data-save id="plainExplanation" class="tall" placeholder="用尽量简单的话解释项目核心机制。"></textarea></div>
+      </section>
+
+      <section id="architecture">
+        <h2>03 架构图</h2>
+        <p class="desc">建议用 Excalidraw 绘制正式版本。这里提供一个 SVG 占位图，可替换为你自己的架构图。</p>
+        <div class="svg-box" data-diagram="architecture">
+          <svg viewBox="0 0 960 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="项目架构图占位">
+            <defs>
+              <filter id="roughShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="8" stdDeviation="8" flood-opacity="0.12"/>
+              </filter>
+            </defs>
+            <rect x="20" y="20" width="920" height="380" rx="26" fill="#fffdf7" stroke="#222" stroke-width="2"/>
+            <text x="50" y="64" font-size="26" font-weight="700" fill="#111">架构图：从外部输入到核心引擎</text>
+            <g filter="url(#roughShadow)">
+              <rect x="60" y="120" width="160" height="92" rx="18" fill="#f8fafc" stroke="#111" stroke-width="2"/>
+              <text x="95" y="160" font-size="18" font-weight="700">用户 / API</text>
+              <text x="91" y="187" font-size="13" fill="#667085">输入请求或命令</text>
+
+              <rect x="300" y="88" width="170" height="88" rx="18" fill="#f5f3ff" stroke="#111" stroke-width="2"/>
+              <text x="340" y="126" font-size="18" font-weight="700">入口层</text>
+              <text x="324" y="153" font-size="13" fill="#667085">CLI / Server / SDK</text>
+
+              <rect x="300" y="238" width="170" height="88" rx="18" fill="#ecfdf3" stroke="#111" stroke-width="2"/>
+              <text x="342" y="276" font-size="18" font-weight="700">配置层</text>
+              <text x="324" y="303" font-size="13" fill="#667085">Config / Env / Plugin</text>
+
+              <rect x="550" y="145" width="180" height="110" rx="18" fill="#fff7ed" stroke="#111" stroke-width="2"/>
+              <text x="604" y="190" font-size="20" font-weight="800">核心引擎</text>
+              <text x="585" y="220" font-size="13" fill="#667085">调度、解析、执行</text>
+
+              <rect x="790" y="120" width="110" height="70" rx="16" fill="#eef2ff" stroke="#111" stroke-width="2"/>
+              <text x="819" y="161" font-size="16" font-weight="700">输出</text>
+
+              <rect x="790" y="230" width="110" height="70" rx="16" fill="#fef3f2" stroke="#111" stroke-width="2"/>
+              <text x="819" y="270" font-size="16" font-weight="700">扩展</text>
+            </g>
+            <path d="M220 166 C250 166 266 132 300 132" fill="none" stroke="#111" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <path d="M470 132 C512 136 518 178 550 190" fill="none" stroke="#111" stroke-width="2.5"/>
+            <path d="M470 282 C510 282 515 232 550 216" fill="none" stroke="#111" stroke-width="2.5"/>
+            <path d="M730 180 C756 170 766 158 790 155" fill="none" stroke="#111" stroke-width="2.5"/>
+            <path d="M730 222 C760 232 766 258 790 265" fill="none" stroke="#111" stroke-width="2.5"/>
+          </svg>
+        </div>
+        <div class="field"><label>架构图说明</label><textarea data-save id="architectureNotes" placeholder="解释每个模块的职责、边界、依赖关系。"></textarea></div>
+      </section>
+
+      <section id="flow">
+        <h2>04 流程图</h2>
+        <p class="desc">选择一条最关键的业务路径，不要试图一次画完整个项目。</p>
+        <div class="svg-box" data-diagram="flow">
+          <svg viewBox="0 0 960 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="核心流程图占位">
+            <rect x="20" y="20" width="920" height="320" rx="26" fill="#fffdf7" stroke="#222" stroke-width="2"/>
+            <text x="50" y="64" font-size="26" font-weight="700" fill="#111">流程图：一次核心调用如何完成</text>
+            <g fill="#fff" stroke="#111" stroke-width="2">
+              <rect x="70" y="140" width="130" height="70" rx="18"/>
+              <rect x="250" y="140" width="130" height="70" rx="18"/>
+              <rect x="430" y="140" width="130" height="70" rx="18"/>
+              <rect x="610" y="140" width="130" height="70" rx="18"/>
+              <rect x="790" y="140" width="100" height="70" rx="18"/>
+            </g>
+            <g font-size="16" font-weight="700" fill="#111" text-anchor="middle">
+              <text x="135" y="181">输入</text>
+              <text x="315" y="181">解析</text>
+              <text x="495" y="181">调度</text>
+              <text x="675" y="181">执行</text>
+              <text x="840" y="181">输出</text>
+            </g>
+            <g fill="none" stroke="#111" stroke-width="2.5">
+              <path d="M200 175 L250 175"/>
+              <path d="M380 175 L430 175"/>
+              <path d="M560 175 L610 175"/>
+              <path d="M740 175 L790 175"/>
+            </g>
+            <g font-size="13" fill="#667085" text-anchor="middle">
+              <text x="315" y="245">找到入口函数和参数结构</text>
+              <text x="495" y="245">定位核心类 / 核心模块</text>
+              <text x="675" y="245">观察状态变化和异常处理</text>
+            </g>
+          </svg>
+        </div>
+        <div class="field"><label>核心链路名称</label><input data-save id="flowName" type="text" placeholder="例如：一次 API 请求处理流程 / CLI 命令执行流程 / 插件加载流程" /></div>
+        <div class="field"><label>流程说明</label><textarea data-save id="flowNotes" class="tall" placeholder="触发入口 → 调用顺序 → 关键函数 / 类 → 中间数据结构 → 最终输出。"></textarea></div>
+      </section>
+
+      <section id="sequence">
+        <h2>05 时序图</h2>
+        <p class="desc">当你需要讲清楚多个对象之间的交互顺序时，用时序图。</p>
+        <div class="svg-box" data-diagram="sequence">
+          <svg viewBox="0 0 960 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="时序图占位">
+            <rect x="20" y="20" width="920" height="420" rx="26" fill="#fffdf7" stroke="#222" stroke-width="2"/>
+            <text x="50" y="64" font-size="26" font-weight="700" fill="#111">时序图：对象之间如何协作</text>
+            <g font-size="15" font-weight="700" text-anchor="middle">
+              <rect x="90" y="100" width="120" height="44" rx="12" fill="#f8fafc" stroke="#111" stroke-width="2"/>
+              <text x="150" y="128">User</text>
+              <rect x="300" y="100" width="120" height="44" rx="12" fill="#f5f3ff" stroke="#111" stroke-width="2"/>
+              <text x="360" y="128">API</text>
+              <rect x="510" y="100" width="120" height="44" rx="12" fill="#fff7ed" stroke="#111" stroke-width="2"/>
+              <text x="570" y="128">Engine</text>
+              <rect x="720" y="100" width="120" height="44" rx="12" fill="#ecfdf3" stroke="#111" stroke-width="2"/>
+              <text x="780" y="128">Storage</text>
+            </g>
+            <g stroke="#98a2b3" stroke-width="1.5" stroke-dasharray="7 7">
+              <line x1="150" y1="144" x2="150" y2="400"/>
+              <line x1="360" y1="144" x2="360" y2="400"/>
+              <line x1="570" y1="144" x2="570" y2="400"/>
+              <line x1="780" y1="144" x2="780" y2="400"/>
+            </g>
+            <g stroke="#111" stroke-width="2" fill="none">
+              <path d="M150 185 L360 185"/>
+              <path d="M360 230 L570 230"/>
+              <path d="M570 275 L780 275"/>
+              <path d="M780 320 L570 320"/>
+              <path d="M570 365 L360 365"/>
+            </g>
+            <g font-size="13" fill="#344054">
+              <text x="205" y="177">1. 调用入口</text>
+              <text x="420" y="222">2. 创建任务</text>
+              <text x="626" y="267">3. 读取 / 写入状态</text>
+              <text x="632" y="312">4. 返回结果</text>
+              <text x="420" y="357">5. 封装响应</text>
+            </g>
+          </svg>
+        </div>
+        <div class="field"><label>交互说明</label><textarea data-save id="sequenceNotes" class="tall" placeholder="列出参与对象、调用顺序、同步/异步边界、异常路径。"></textarea></div>
+      </section>
+
+      <section id="source">
+        <h2>06 源码追踪</h2>
+        <p class="desc">围绕问题读源码，而不是逐行死磕。每次只追一条路径。</p>
+        <table>
+          <thead><tr><th>文件路径</th><th>职责</th><th>关键函数 / 类</th><th>被谁调用</th><th>下一步</th></tr></thead>
+          <tbody>
+            <tr><td><textarea data-save id="src1Path" placeholder="src/index.ts"></textarea></td><td><textarea data-save id="src1Role"></textarea></td><td><textarea data-save id="src1Key"></textarea></td><td><textarea data-save id="src1Caller"></textarea></td><td><textarea data-save id="src1Next"></textarea></td></tr>
+            <tr><td><textarea data-save id="src2Path"></textarea></td><td><textarea data-save id="src2Role"></textarea></td><td><textarea data-save id="src2Key"></textarea></td><td><textarea data-save id="src2Caller"></textarea></td><td><textarea data-save id="src2Next"></textarea></td></tr>
+            <tr><td><textarea data-save id="src3Path"></textarea></td><td><textarea data-save id="src3Role"></textarea></td><td><textarea data-save id="src3Key"></textarea></td><td><textarea data-save id="src3Caller"></textarea></td><td><textarea data-save id="src3Next"></textarea></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="unknowns">
+        <h2>07 不懂点与补洞</h2>
+        <p class="desc">讲不清的地方不是失败，而是下一步学习路线。</p>
+        <div class="grid-2">
+          <div class="field"><label>我目前讲不清的地方</label><textarea data-save id="unknownList" class="tall" placeholder="1. ……\n2. ……\n3. ……”"></textarea></div>
+          <div class="field"><label>补洞计划</label><textarea data-save id="patchPlan" class="tall" placeholder="问题 → 原理解 → 证据 → 修正后理解 → 能否一句话讲清楚。"></textarea></div>
+        </div>
+        <div>
+          <span class="pill">项目架构问题</span>
+          <span class="pill">语言特性问题</span>
+          <span class="pill">框架 / 库问题</span>
+          <span class="pill">系统设计问题</span>
+          <span class="pill">领域知识问题</span>
+        </div>
+      </section>
+
+      <section id="assets">
+        <h2>08 Excalidraw / SVG 资产库</h2>
+        <p class="desc">把 Excalidraw 导出的 SVG、项目截图、架构草图上传到这里。导出 HTML 时，图片会一起保存为内嵌数据。</p>
+        <div class="actions no-print" style="justify-content:flex-start;margin-bottom:10px;">
+          <label class="file-button secondary" for="assetInput">上传 SVG / PNG / JPG</label>
+          <input id="assetInput" type="file" accept=".svg,image/svg+xml,image/png,image/jpeg" multiple onchange="handleAssets(event)" />
+          <button class="secondary" onclick="clearAssets()">清空资产库</button>
+        </div>
+        <div class="field"><label>图形命名与使用说明</label><textarea data-save id="assetNotes" placeholder="例如：architecture-v1.svg 是总架构图；flow-plugin-load.svg 是插件加载流程图。"></textarea></div>
+        <div id="assetGrid" class="asset-grid"></div>
+      </section>
+
+      <section id="final">
+        <h2>09 最终费曼学习笔记</h2>
+        <p class="desc">这部分是最终可复习、可分享、可讲给别人听的版本。</p>
+        <div class="field"><label>项目解决什么问题</label><textarea data-save id="finalProblem"></textarea></div>
+        <div class="field"><label>核心设计思想</label><textarea data-save id="finalDesign" class="tall"></textarea></div>
+        <div class="field"><label>主要模块与职责</label><textarea data-save id="finalModules" class="tall"></textarea></div>
+        <div class="field"><label>核心调用链路</label><textarea data-save id="finalCallPath" class="tall"></textarea></div>
+        <div class="field"><label>最值得学习的源码设计</label><textarea data-save id="finalSourceValue" class="tall"></textarea></div>
+        <div class="field"><label>贡献入口 / 下一步行动</label><textarea data-save id="finalNext" placeholder="适合阅读的 issue、可以补充的测试、可以改进的文档、可以尝试的 PR。"></textarea></div>
+      </section>
+
+      <p class="footer-note">保存规则：点击“保存到浏览器”写入 localStorage；点击“导出 HTML”生成一个可长期保存的单文件报告。</p>
+    </div>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "feynman-open-source-report-v1";
+    const ASSET_KEY = "feynman-open-source-report-assets-v1";
+
+    function getFields() {
+      return Array.from(document.querySelectorAll("[data-save]"));
+    }
+
+    function collectReport() {
+      const data = {};
+      getFields().forEach(el => { data[el.id] = el.value || ""; });
+      return data;
+    }
+
+    function saveReport() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(collectReport()));
+      localStorage.setItem(ASSET_KEY, JSON.stringify(getAssets()));
+      flash("已保存到当前浏览器。导出 HTML 可长期归档。");
+    }
+
+    function loadReport() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        try {
+          const data = JSON.parse(raw);
+          getFields().forEach(el => { if (data[el.id] !== undefined) el.value = data[el.id]; });
+        } catch (_) {}
+      }
+      renderAssets();
+    }
+
+    function clearReport() {
+      if (!confirm("确定清空当前报告文字和资产库吗？")) return;
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(ASSET_KEY);
+      getFields().forEach(el => { el.value = ""; });
+      renderAssets([]);
+    }
+
+    function flash(message) {
+      const old = document.getElementById("flash");
+      if (old) old.remove();
+      const div = document.createElement("div");
+      div.id = "flash";
+      div.textContent = message;
+      div.style.position = "fixed";
+      div.style.right = "20px";
+      div.style.bottom = "20px";
+      div.style.background = "#111827";
+      div.style.color = "white";
+      div.style.padding = "12px 16px";
+      div.style.borderRadius = "999px";
+      div.style.boxShadow = "0 12px 28px rgba(0,0,0,.18)";
+      div.style.zIndex = "99";
+      document.body.appendChild(div);
+      setTimeout(() => div.remove(), 2200);
+    }
+
+    function getAssets() {
+      const raw = localStorage.getItem(ASSET_KEY);
+      if (!raw) return [];
+      try { return JSON.parse(raw); } catch (_) { return []; }
+    }
+
+    function setAssets(assets) {
+      localStorage.setItem(ASSET_KEY, JSON.stringify(assets));
+      renderAssets(assets);
+    }
+
+    function handleAssets(event) {
+      const files = Array.from(event.target.files || []);
+      if (!files.length) return;
+      const existing = getAssets();
+      let pending = files.length;
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          existing.push({ name: file.name, type: file.type || "image/svg+xml", data: reader.result });
+          pending -= 1;
+          if (pending === 0) {
+            setAssets(existing);
+            flash("图形资产已加入报告。记得点击保存或导出 HTML。");
+            event.target.value = "";
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderAssets(assets = getAssets()) {
+      const grid = document.getElementById("assetGrid");
+      grid.innerHTML = "";
+      if (!assets.length) {
+        const empty = document.createElement("div");
+        empty.className = "card small";
+        empty.textContent = "暂无图形资产。建议在 Excalidraw 中导出 SVG 后上传。";
+        grid.appendChild(empty);
+        return;
+      }
+      assets.forEach((asset, index) => {
+        const card = document.createElement("div");
+        card.className = "asset";
+        card.innerHTML = `
+          <img src="${asset.data}" alt="${escapeHtml(asset.name)}" />
+          <h3>${escapeHtml(asset.name)}</h3>
+          <p class="small">可用于替换架构图、流程图、时序图，或作为补充图形。</p>
+          <button class="secondary no-print" onclick="removeAsset(${index})">删除</button>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function removeAsset(index) {
+      const assets = getAssets();
+      assets.splice(index, 1);
+      setAssets(assets);
+    }
+
+    function clearAssets() {
+      if (!confirm("确定清空所有图形资产吗？")) return;
+      setAssets([]);
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>'"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[ch]));
+    }
+
+    function exportHtml() {
+      saveReport();
+      const clone = document.documentElement.cloneNode(true);
+      const data = collectReport();
+      clone.querySelectorAll("textarea, input").forEach(el => {
+        const id = el.getAttribute("id");
+        if (id && data[id] !== undefined) {
+          if (el.tagName.toLowerCase() === "textarea") {
+            el.textContent = data[id];
+          } else {
+            el.setAttribute("value", data[id]);
+          }
+        }
+      });
+      const html = "<!doctype html>\n" + clone.outerHTML;
+      const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const project = (document.getElementById("projectName").value || "open-source-project").replace(/[^a-zA-Z0-9\u4e00-\u9fa5_-]+/g, "-");
+      a.href = url;
+      a.download = `${project}-feynman-report.html`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    document.addEventListener("input", event => {
+      if (event.target.matches("[data-save]")) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(collectReport()));
+      }
+    });
+
+    loadReport();
+  </script>
+</body>
+</html>
